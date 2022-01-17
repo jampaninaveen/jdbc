@@ -1,0 +1,151 @@
+import java.awt.*;
+import java.awt.event.*;
+import java.io.*;
+import java.sql.*;
+
+
+
+class Driver 
+{
+	Frame f1;
+	Label l1,l2,l3,l4,l5,l6,l7;
+	Button b1;
+	TextField t1,t2,t3,t4,t5;
+
+	public Driver()				throws Exception
+	{
+		f1=new Frame("Hello");
+		//f1.setBackground("blue");
+		Label l=new Label("Movie Names");
+		l.setFont(new Font("Serif",Font.BOLD,40));
+		l.setBounds(420,30,500,40);
+		f1.add(l);
+
+		l1=new Label("Movie Name:");
+		l1.setBounds(475,120,158,30);
+		l1.setFont(new Font("Serif",Font.BOLD,30));
+		t1=new TextField();
+		t1.setBounds(640,122,180,30);
+		t1.setFont(new Font("Serif",Font.PLAIN,20));
+		f1.add(t1);
+		f1.add(l1);
+
+		l2=new Label("Name of actor:");
+		l2.setFont(new Font("Serif",Font.BOLD,30));
+		l2.setBounds(475,180,159,30);
+		t2=new TextField();
+		t2.setBounds(640,182,180,30);
+		t2.setFont(new Font("Serif",Font.PLAIN,20));
+		f1.add(l2);
+		f1.add(t2);
+
+		l3=new Label("Actress Name: ");
+		l3.setFont(new Font("Serif",Font.BOLD,30));
+		l3.setBounds(495,240,145,23);
+		t3=new TextField();
+		t3.setBounds(640,235,180,30);
+		t3.setFont(new Font("Serif",Font.PLAIN,20));
+		f1.add(t3);
+		f1.add(l3);
+
+		l4=new Label("year of release: ");
+		l4.setFont(new Font("Serif",Font.BOLD,30));
+		l4.setBounds(495,290,145,30);
+		t4=new TextField();
+		t4.setBounds(640,290,180,30);
+		t4.setFont(new Font("Serif",Font.PLAIN,20));
+		f1.add(t4);
+		f1.add(l4);
+		
+		l5=new Label("Director Name:");
+		l5.setFont(new Font("Serif",Font.BOLD,30));
+		l5.setBounds(475,350,155,30);
+		t5=new TextField();
+		t5.setFont(new Font("Serif",Font.PLAIN,20));
+		t5.setBounds(640,350,180,30);
+		f1.add(t5);
+		f1.add(l5);
+
+		
+		b1=new Button("Submit");
+		b1.setFont(new Font("Serif",Font.BOLD,25));
+		b1.setBounds(620,600,100,45);
+		f1.add(b1);
+
+
+		f1.addWindowListener(new WindowAdapter(){
+		public void windowClosing(WindowEvent we)
+		{
+			System.exit(0);
+		}
+		});
+
+		b1.addActionListener(new ActionListener(){
+		public void actionPerformed(ActionEvent ae)
+		{
+			try
+			{
+				//data can be stored in file
+
+				String fname="\nName      : "+t1.getText();
+				String lname="\nSur Name  : "+t2.getText();
+				String rollno="\nRoll No   : "+t3.getText();
+				String branch="\nBranch    : "+t4.getText();
+				String mobile="\nMobile    : "+t5.getText();
+				
+				FileOutputStream f=new FileOutputStream("Information.txt",true);
+				f.write(fname.getBytes());
+				f.write(lname.getBytes());
+				f.write(rollno.getBytes());
+				f.write(branch.getBytes());
+				f.write(mobile.getBytes());
+				f.close();
+				
+				try{
+					//data can be stored in database 
+
+					String fn=t1.getText();
+					String ln=t2.getText();
+					String r=t3.getText();
+					String b=t4.getText();
+					String m=t5.getText();
+					
+	
+					Class.forName("com.mysql.jdbc.Driver");
+					Connection con = DriverManager.getConnection("jdbc:mysql://localhost:3306/Mca","root","Naveen@7316");
+					//Statement st = con.createStatement();
+					String sql="insert into students values(?,?,?,?,?);";
+					PreparedStatement stm=con.prepareStatement(sql);
+					stm.setString(1,fn);
+					stm.setString(2,ln);
+					stm.setString(3,r);
+					stm.setString(4,b);
+					stm.setString(5,m);
+					stm.execute();
+					stm.close();
+					con.close();
+					
+				}
+				catch(Exception e)
+				{
+					System.out.print(e);
+				}		
+			}
+			catch(Exception e)
+			{
+				System.out.println(e);
+			}
+		}
+		});
+
+		f1.setLayout(null);
+		f1.setSize(1300,700);
+		f1.setVisible(true);
+	}
+
+public static void main(String args[])		throws Exception
+	{
+	Driver f=new Driver();
+	
+	}	
+}
